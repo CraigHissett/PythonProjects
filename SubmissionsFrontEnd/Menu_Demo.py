@@ -15,7 +15,7 @@ class MenuDemo(ttk.Frame):
     def __init__(self, isapp=True, name='menudemo'):
         ttk.Frame.__init__(self, name=name)
         self.pack(expand=Y, fill=BOTH)
-        self.master.title('Menu Demo')
+        self.master.title('Submissions Menu')
         self.isapp = isapp
         self._create_widgets()
          
@@ -25,7 +25,10 @@ class MenuDemo(ttk.Frame):
     def _create_demo_panel(self):
         demoPanel = Frame(self, name='demo')
         demoPanel.pack(side=TOP, fill=BOTH, expand=Y)
-         
+
+        ent1 = Entry(demoPanel)
+        ent1.pack()
+ 
         msg = ["This window contains a menubar with cascaded menus.  You can post ",
               "a menu from the keyboard by typing Alt+x, where \"x\" is the ",
               "character underlined on the menu.\n\tYou can then traverse among the ",
@@ -52,10 +55,49 @@ class MenuDemo(ttk.Frame):
         self._menu = Menu(self.master, name='menu')
         self._build_submenus()
         self.master.config(menu=self._menu)
-         
+
+        #bind return key for processing sub scans
+        #self.bind_all('<Control-m>', lambda e: self._subscan())
+        self.bind_all('<Return>', lambda e: self._subscan())
+
         # set up standard bindings for the Menu class
         # (essentially to capture mouse enter/leave events)
         self._menu.bind_class('Menu', '<<MenuSelect>>', self._update_status)
+
+    def _create_report_panel(self):
+        ReportPanel = Frame(self, name='report')
+        ReportPanel.pack(side=TOP, fill=BOTH, expand=Y)
+
+        ent2 = Entry(ReportPanel)
+        ent2.pack()
+ 
+        msg = ["Report Panel!"]
+         
+        lbl = ttk.Label(ReportPanel, text=''.join(msg), wraplength='4i', justify=LEFT)
+        lbl.pack(side=TOP, padx=5, pady=5)
+         
+        # create statusbar
+        statusBar = ttk.Frame()
+        self.__status = ttk.Label(self.master, text=' ', relief=SUNKEN, borderwidth=1,
+                              font=('Helv 10'), anchor=W, name='status')
+         
+        self.__status.pack(side=LEFT, padx=2, expand=Y, fill=BOTH)
+        statusBar.pack(side=BOTTOM, fill=X, pady=2)
+                 
+        # create the main menu (only displays if child of the 'root' window)
+        self.master.option_add('*tearOff', False)  # disable all tearoff's
+        self._menu = Menu(self.master, name='menu')
+        self._build_submenus()
+        self.master.config(menu=self._menu)
+
+        #bind return key for processing sub scans
+        #self.bind_all('<Control-m>', lambda e: self._subscan())
+        self.bind_all('<Return>', lambda e: self._subscan())
+
+        # set up standard bindings for the Menu class
+        # (essentially to capture mouse enter/leave events)
+        self._menu.bind_class('Menu', '<<MenuSelect>>', self._update_status)
+
  
     def _build_submenus(self):
         # create the submenus
@@ -87,7 +129,7 @@ class MenuDemo(ttk.Frame):
                               command=lambda m=item: self._demo_only(m))
  
         fmenu.add_separator()
-        fmenu.add_command(label='Exit Demo',
+        fmenu.add_command(label='Exit Submissions',
                           command=lambda: self.master.destroy()) # kill toplevel wnd
 
         fmenu.entryconfig(0, compound=LEFT,
@@ -224,8 +266,7 @@ class MenuDemo(ttk.Frame):
              
         menu.entryconfig(3, bitmap='', compound=LEFT,
                          command=lambda i=labels[3]:
-                                    self._you_invoked((i,
-                                                      'Fire a command here')))           
+                                    self._create_report_panel())
                                 
     # ================================================================================
     # Bound and Command methods
@@ -271,6 +312,12 @@ class MenuDemo(ttk.Frame):
         self.__status.configure(background='SeaGreen1', foreground='black',
                                 text="You invoked the '{}' {}.".format(value[0],
                                                                        value[1]))
+    
+    def _subscan(self):
+        SubCode = '527213001'
+        print ("Scan invoked")
+        print (SubCode)
+
          
 if __name__ == '__main__':
     MenuDemo().mainloop()
