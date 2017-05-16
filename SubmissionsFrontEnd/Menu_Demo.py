@@ -9,7 +9,6 @@
  
 from tkinter import *
 from tkinter import ttk
-#from demopanels import MsgPanel, SeeDismissPanel
  
 class MenuDemo(ttk.Frame):
      
@@ -35,7 +34,7 @@ class MenuDemo(ttk.Frame):
               "typing its underlined character.\n\tIf a menu entry has an accelerator, ",
               "you can invoke the entry without posting the menu just by typing ",
               "the accelerator.\n\tThe rightmost menu can be torn off into a palette ",
-              "by selecting the first item in the menu."]
+              "by selecting the first item in the menu"]
          
         lbl = ttk.Label(demoPanel, text=''.join(msg), wraplength='4i', justify=LEFT)
         lbl.pack(side=TOP, padx=5, pady=5)
@@ -66,6 +65,7 @@ class MenuDemo(ttk.Frame):
         #    3. add the submenu's individual items
          
         self._add_file_menu()
+        self._add_subs_menu()
         self._add_basic_menu()
         self._add_cascades_menu()
         self._add_more_menu()
@@ -89,7 +89,11 @@ class MenuDemo(ttk.Frame):
         fmenu.add_separator()
         fmenu.add_command(label='Exit Demo',
                           command=lambda: self.master.destroy()) # kill toplevel wnd
-         
+
+        fmenu.entryconfig(0, compound=LEFT,
+                         command=lambda i=labels[0]:
+                                    filedialog.askopenfilename())
+                                    
     # Basic menu ------------------------------------------------------------------       
     def _add_basic_menu(self):
         bmenu = Menu(self._menu)
@@ -205,7 +209,24 @@ class MenuDemo(ttk.Frame):
         for c in ('red', 'orange', 'yellow', 'green', 'blue'):
             menu.add_command(label=c, background=c,
                              command=lambda c=c: self._you_invoked((c, 'color')))   
-                     
+
+    # Submissions menu ------------------------------------------------------------------   
+    def _add_subs_menu(self):
+        menu = Menu(self._menu)
+        self._menu.add_cascade(label='Submissions', menu=menu, underline=0)
+         
+        labels = ('Add Submission', 'Amend Existing', 'Practical Submissions',
+                'View Submission Results', 'View Non-submission list')
+         
+        for item in labels:
+            menu.add_command(label=item,
+                             command=lambda i=item: self._you_invoked((i, 'entry')))
+             
+        menu.entryconfig(3, bitmap='', compound=LEFT,
+                         command=lambda i=labels[3]:
+                                    self._you_invoked((i,
+                                                      'Fire a command here')))           
+                                
     # ================================================================================
     # Bound and Command methods
     # ================================================================================               
